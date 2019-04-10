@@ -1,0 +1,68 @@
+#app{
+  justify-content: center;
+  .bg{
+    position: absolute;
+    height: 90%;
+    width: 90%;
+    z-index: -100;
+  }
+
+  #yellow-ln{
+    top: -30%;
+    left: -50%;
+  }
+  #green-ln{
+    bottom: -60%;
+    left: 40%;
+  }
+  #purple-cir{
+    top: -40%;
+    right: -40%;
+  }
+  .title{
+    font-size: 2rem;
+    font-weight: 900;
+    margin-bottom: 2%;
+  }
+  .description{
+    text-align: center;
+  }
+  input#company-name{
+    font-family: inherit;
+    padding: 4px 8px;
+    font-size: 1.2rem;
+    width: 20rem;
+    height: 4rem;
+    border-radius: 4px;
+    border: 1px solid rgb(185, 185, 185);
+    &:focus{
+      border: 2px solid #6C46DE;
+      outline: none;
+      color: #6C46DE;
+      font-weight: 900;
+    }
+    &.filled{
+      &:not(:focus){
+        border: 2px solid #6C46DE;
+        outline: none;
+        color: #6C46DE;
+        font-weight: 900;
+      }
+    }
+  }
+  button{
+    cursor: pointer;
+    border-radius: 4px;
+    width: 14rem;
+    height: 4rem;
+    font-family: inherit;
+    color: white;
+    font-size: 1rem;
+    font-weight: 900;
+    background-color: #6C46DE;
+    box-shadow: 0px 5px 7px rgba(0, 0, 0, 0.25);
+    &.get-started{
+      margin-top: 5%;
+    }
+  }
+}

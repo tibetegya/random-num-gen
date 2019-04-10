@@ -1,0 +1,37 @@
+.box-head {
+  /* border: 1px solid red; */
+  border-radius: 12px;
+  width: 250px;
+  height: 120px;
+  position: relative;
+  overflow: hidden;
+  padding: 20px;
+  color: white;
+  margin: 0 1rem;
+  &#purple-bg{
+    background: linear-gradient(120deg, #8D39FF, #6E0CF2);
+    margin-left: 0;
+  }
+  &#orange-bg{
+    background: linear-gradient(120deg, #FF9134, #F46322);
+  }
+  &#green-bg{
+    background: linear-gradient(120deg, #00D572, #00B48A);
+  }
+  img{
+    position: absolute;
+    top: -50%;
+    right: -10%;
+  }
+  .title{
+    font-size: .8rem;
+    max-width: 60%;
+  }
+  .figure{
+    font-weight: 900;
+    font-size: 1.5rem;
+    position: absolute;
+    /* bottom: 20px; */
+    right: 20px;
+  }
+}
