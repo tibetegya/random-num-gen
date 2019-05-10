@@ -1,22 +1,23 @@
 import React from 'react';
 import '../assets/styles/paginator.scss'
 
-const Paginator = ({ pageNumber, handlePaginate }) => {
-  return (
+const Paginator = ({ pageNumber, handlePaginate, totalPages }) => (
   <div className="paginator">
-  <div className="left">
-    <input
-      type="number"
-      name="paginatorInput"
-      id="paginatorInput"
-      defaultValue={pageNumber}
-    />
-    Page {pageNumber}
+    <div className="left">
+      <input
+        type="number"
+        name="paginatorInput"
+        id="paginatorInput"
+        onChange={handlePaginate}
+        value={pageNumber}
+      />
+      Page {pageNumber} of {totalPages} pages
+    </div>
+    <div className="right">
+      <button name="previous" type="button" onClick={handlePaginate}>Previous</button>
+      <button name="next" type="button" onClick={handlePaginate}>Next</button>
+    </div>
   </div>
-  <div className="right">
-    <button type="button">Previous</button>
-    <button type="button">Next</button>
-  </div>
-  </div>)
-}
+);
+
 export default Paginator;

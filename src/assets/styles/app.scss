@@ -27,14 +27,18 @@
   .description{
     text-align: center;
   }
-  input#company-name{
+  input{
     font-family: inherit;
     padding: 4px 8px;
-    font-size: 1.2rem;
-    width: 20rem;
-    height: 4rem;
+    margin: 1rem;
+    font-size: 1rem;
+    min-width: 60%;
+    height: 3rem;
     border-radius: 4px;
     border: 1px solid rgb(185, 185, 185);
+    &#company-name{
+      margin-left: 0;
+    }
     &:focus{
       border: 2px solid #6C46DE;
       outline: none;
@@ -50,11 +54,11 @@
       }
     }
   }
-  button{
+  .btn{
     cursor: pointer;
     border-radius: 4px;
     width: 14rem;
-    height: 4rem;
+    height: 3rem;
     font-family: inherit;
     color: white;
     font-size: 1rem;
@@ -63,6 +67,11 @@
     box-shadow: 0px 5px 7px rgba(0, 0, 0, 0.25);
     &.get-started{
       margin-top: 5%;
+    }
+    &.sign-in{
+      outline: none;
+      margin-bottom: 5%;
+      box-shadow: none;
     }
   }
 }

@@ -1,48 +1,52 @@
-import React from 'react';
+import React, { useState, useEffect, useReducer } from 'react';
 import './assets/styles/app.scss'
 import yellowLine from './assets/images/yellow-line.svg';
 import greenLine from './assets/images/green-line.svg';
 import purpleCircle from './assets/images/purple-circle.svg';
 import phoneMake from './assets/images/phonemake.png';
-import { postUser, genNumbers } from './utils/helpers'
+import Modal from './components/Modal';
 
-class App extends React.Component{
-  constructor(props){
-    super(props);
-    this.state = { filled: '', company_name: '' }
-    this.handleGetStarted = this.handleGetStarted.bind(this);
-    this.handleChange = this.handleChange.bind(this);
-  }
-  componentDidMount (){
-    if(localStorage.getItem('user')){
-
+const App = (props) => {
+  const [modalOpen, setModalOpen] = useState(false);
+  const [companyName, setCompanyName] = useState('');
+  const [isSignedIn, setIsSignedIn] = useState(false);
+  useEffect(() => {
+    if(localStorage.getItem('companyName')){
+      props.history.push('/dashboard');
     }
-  }
-  handleChange({ target: { name, value } }){
-    const filled = value.length > 0 ? 'filled': '';
-    const company_name = value.trim();
-    this.setState({ filled, company_name })
-    console.log(value)
-  }
+  }, [isSignedIn, props]);
 
-  handleGetStarted (){
-    postUser(this.state.company_name)
-    .then(data => {
-      localStorage.setItem('company_name', data.user.name);
-      document.cookie = `company_name=${data.user.name}`
-      genNumbers()
-      .then(data => {
-        this.props.history.push({
-          pathname: '/dashboard',
-          state: { data }
-        });
-      })
-      .catch(err => console.log(err))
-    })
-    .catch(err => console.log('error....', err))
+  const handleSignIn = (e) => {
+    const { target: { name, value } } = e;
+    e.preventDefault();
+    switch (name) {
+      case 'companyName':
+      setCompanyName(value);
+        break;
+      case 'signIn':
+        localStorage.setItem('companyName', companyName)
+        setIsSignedIn(true);
+        setModalOpen(false);
+        break;
+      default:
+    };
+
   }
-  render() {
-    return (
+  const handleModal = (e) => {
+    const { target: { name } } = e;
+    e.preventDefault();
+    switch (name) {
+      case 'closeModal':
+        setModalOpen(false);
+        break;
+      case 'openModal':
+        setModalOpen(true);
+        break;
+      default:
+    };
+  };
+  return (
+    <React.Fragment>
       <div className="wrapper" id="app">
       <img src={yellowLine} alt="line" className="bg" id="yellow-ln" />
       <img src={greenLine} alt="line" className="bg" id="green-ln" />
@@ -55,24 +59,38 @@ class App extends React.Component{
         Enter a company below in order to <br/>
         generate a collection of phone numbers<br/>
         </p>
-        {/* <input
-          className={this.state.filled}
-          type="text"
-          name="company_name"
-          id="company-name"
-          placeholder="Enter company name"
-          onChange={this.handleChange}
-        /> */}
-        <div className="g-signin2" data-onsuccess="onSignIn"></div>
-        {/* <button
-          className="get-started"
-          onClick={this.handleGetStarted}
+        <button
+          name="openModal"
+          className="get-started btn"
+          onClick={handleModal}
         >
         Get Started
-        </button> */}
+        </button>
+        <Modal
+          handleModal={handleModal}
+          isOpen={modalOpen}
+          title="Get Started"
+        >
+          <h4>Create an account to get started</h4>
+          <input
+            type="text"
+            name="companyName"
+            id="company-name"
+            placeholder="Enter company name"
+            onChange={handleSignIn}
+          />
+          <button
+            name="signIn"
+            className="sign-in btn"
+            onClick={handleSignIn}
+          >
+          Enter
+          </button>
+        </Modal>
       </div>
-    );
-  };
-}
+    </React.Fragment>
+  );
+};
+
 
 export default App;

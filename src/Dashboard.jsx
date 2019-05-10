@@ -1,117 +1,180 @@
-import React from 'react';
+import React, { useState, useEffect, useReducer } from 'react';
 import './assets/styles/dashboard.scss';
-import emptyImg from './assets/images/empty-state.svg'
 import Navbar from './components/Navbar';
-import BoxHead from './components/BoxHead';
-import Paginator from './components/Paginator';
 import yellowLine from './assets/images/yellow-line.svg';
 import greenCircle from './assets/images/green-circle.svg';
+import Loader from './components/Loader';
+import EmptyState from './components/EmptyState';
+import Overview from './components/Overview';
+import Paginator from './components/Paginator';
+import GenerateModal from './components/GenerateModal';
+import reducer from './utils/reducers';
+import { generate, getData } from './utils/helpers';
 
-class Dashboard extends React.Component {
-  constructor(props){
-    super(props);
-    this.paginateNumbers = this.paginateNumbers.bind(this);
-    this.handleGenerate = this.handleGenerate.bind(this);
-    this.state = {
-      numbers: {},
-      showOverview: false
-    }
-  };
+const Dashboard = (props) => {
+  const [state, dispatch] = useReducer(reducer,{ data: {}, numbers: {}, csv: '' });
+  const [isSignedIn, setIsSignedIn] = useState(true);
+  const [showOverview, setShowOverview] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [optionsOpen, setOptionsOpen] = useState(false);
+  const [genAmmount, setGenAmmount] = useState(10);
+  const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState('1');
 
-  paginateNumbers(nums) {
-    // const { location: { state: { data } } } = this.props;
-    const data = {
-      max: '0993884838',
-      min: '0312332332',
-      generated_numbers: [ '0939493123']
-    }
-    const pages = nums.length / 25;
-    let fetchedNumbers = {}
-    for(let i = 0; i < pages; i++ ){
-      const beginIndex = 25 * i;
-      const endIndex = 25 * (i+1);
-      fetchedNumbers = {
-        ...fetchedNumbers,
-        [i]: data.generated_numbers.slice(beginIndex, endIndex)
+  useEffect(() => {
+    setLoading(true);
+    getData().then(retrievedData => {
+      if(retrievedData){
+        dispatch({type: 'set_data', payload: retrievedData})
+        setShowOverview(true);
+        setLoading(false);
       }
+      setLoading(false);
+    })
+  }, [])
+
+  useEffect(() => {
+    if(!localStorage.getItem('companyName')){
+      props.history.push('/');
+    }
+  }, [props, isSignedIn])
+
+  const handleOptions = (e) => {
+    const { target: { name } } = e;
+    e.preventDefault();
+    switch (name) {
+      case 'options':
+        setOptionsOpen(!optionsOpen);
+        break;
+      case 'ascending':
+        dispatch({
+          type: 'ascending_sort',
+          payload: state.data.numbers
+        })
+        setOptionsOpen(false);
+        break;
+      case 'descending':
+        dispatch({
+          type: 'descending_sort',
+          payload: state.data.numbers
+        })
+        setOptionsOpen(false);
+        break;
+      case 'download':
+        setOptionsOpen(false);
+        break;
+      case 'logout':
+        localStorage.removeItem('companyName')
+        setIsSignedIn(false);
+        break;
+      default:
     };
 
-    console.log('fetchedNumbers', fetchedNumbers);
-    this.setState({
-      numbers: fetchedNumbers
-    });
-  }
-  handleGenerate() {
-    this.setState({ showOverview: true })
   }
 
-  componentDidMount() {
-    // const { location: { state: { data } } } = this.props;
-    const data = {
-      max: '0993884838',
-      min: '0312332332',
-      generated_numbers: [ '0939493123']
-    }
-    this.paginateNumbers(data.generated_numbers);
+  const handleModal = (e) => {
+    const { target: { name } } = e;
+    e.preventDefault();
+    switch (name) {
+      case 'closeModal':
+        setModalOpen(false);
+        setGenAmmount(10);
+        break;
+      case 'openModal':
+        setOptionsOpen(false);
+        setModalOpen(true);
+        break;
+      default:
+    };
   };
 
-  render (){
-    // const { location: { state: { data } } } = this.props;
-    const data = {
-      max: '0993884838',
-      min: '0312332332',
-      generated_numbers: [ '0939493123']
-    }
-    const { numbers, showOverview } = this.state;
-    return (
-      <React.Fragment>
-        <Navbar />
-        <div className="wrapper" id="dashboard">
-          <img src={yellowLine} alt="line" className="bg" id="yellow-ln"/>
-          <img src={greenCircle} alt="line" className="bg" id="green-cir"/>
-          <div className="centered">
-          {!showOverview ? (
-            <div className="empty-state">
-              <img src={emptyImg} alt="empty state"/>
-              <p>There are no generated Numbers</p>
-              <p>press button below to generate</p>
-              <button onClick={this.handleGenerate}>Generate new numbers</button>
-            </div>
-          ): (
-            <>
-              <div className="overview">
-                <BoxHead
-                  id="purple-bg"
-                  title="Total generated numbers"
-                  content={data.generated_numbers.length}
-                />
-                <BoxHead
-                  id="green-bg"
-                  title="Max generated number"
-                  content={data.max}
-                />
-                <BoxHead
-                  id="orange-bg"
-                  title="Min generated number"
-                  content={data.min}
-                />
-              </div>
-              <div className="generated">
-                <div className="title">Generated numbers</div>
-                <div className="tiles">
-                  {Object.keys(numbers).length > 0 && numbers['0'].map(number => (<div key={number} className="tile">{number}</div>))}
-                </div>
-              </div>
-              <Paginator
-                pageNumber={1}
-              />
-            </>
-          )}
-          </div>
-        </div>
-      </React.Fragment>
-    )
-  }
+  const handleGenerate = (e) => {
+    const { target: { name, value } } = e;
 
+    if(name === 'generateInput' && value !== '') {
+      setGenAmmount(parseInt(value.trim(), 10));
+    }
+    if(name === 'generateBtn') {
+      setModalOpen(false);
+      setShowOverview(true);
+      setLoading(true);
+      generate(genAmmount).then(newData => {
+        dispatch({type: 'set_data', payload: newData})
+        setLoading(false);
+      })
+    }
+  }
+  const handlePaginate = (e) => {
+    e.preventDefault();
+    const { target: { name, value } } = e;
+    switch(name) {
+      case 'paginatorInput':
+      if (value !== ''
+      && value !== '0'
+      && parseInt(value, 10) <= Object.keys(numbers).length) setPage(value);
+        break;
+      case 'previous':
+        if(page !== '1'){
+          const PrevPage = String(parseInt(page, 10) - 1)
+          setPage(PrevPage);
+        }
+        break;
+      case 'next':
+      if(page !== String(Object.keys(numbers).length)){
+        const PrevPage = String(parseInt(page, 10) + 1)
+        setPage(PrevPage);
+      }
+      break;
+      default:
+    }
+  }
+  const {data, numbers, csv} = state;
+  return (
+    <React.Fragment>
+      <Navbar
+        isOpen={optionsOpen}
+        handleOptions={handleOptions}
+        handleModal={handleModal}
+        showOverview={showOverview}
+        csvData={csv}
+      />
+      <div className="wrapper" id="dashboard">
+        <img src={yellowLine} alt="line" className="bg" id="yellow-ln"/>
+        <img src={greenCircle} alt="line" className="bg" id="green-cir"/>
+        <div className="centered">
+        {loading ? 
+          (<Loader/>) :
+          !showOverview ? (
+          <EmptyState handleModal={handleModal}/>
+        ) : (
+          <React.Fragment>
+            <Overview
+              total={data.numbers.length}
+              min={data.max}
+              max={data.min}
+            />
+            <div className="generated">
+              <div className="title">Generated numbers</div>
+              <div className="tiles">
+                {Object.keys(numbers).length > 0 && numbers[page].map(number => (<div key={number} className="tile">{number}</div>))}
+              </div>
+            </div>
+            <Paginator
+              pageNumber={page}
+              totalPages={Object.keys(numbers).length}
+              handlePaginate={handlePaginate}
+            />
+          </React.Fragment>
+        )}
+        </div>
+      </div>
+      <GenerateModal
+        handleAction={handleGenerate}
+        handleModal={handleModal}
+        isOpen={modalOpen}
+      />
+    </React.Fragment>
+  )
 }
+
 export default Dashboard;
