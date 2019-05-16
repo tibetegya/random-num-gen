@@ -1,7 +1,7 @@
 import React from 'react';
 import { shallow, mount, render } from 'enzyme';
 
-import App from './App';
+import App from '../src/App';
 
 describe('App component test', () => {
   const mockFn = jest.fn();
@@ -18,13 +18,12 @@ describe('App component test', () => {
     expect(wrapper).toMatchSnapshot();
   })
 
-  it.only('should call handleModal method when a button is clicked', () => {
+  it('should call handleModal method when a button is clicked', () => {
     const wrapper = shallow(<App
       history={{
         push: mockFn,
       }}
     />);
-    // console.log('>>>>>>', wrapper.instance())
     const button = wrapper.find('button.get-started').simulate('click', {
       preventDefault: mockFn,
       target: {

@@ -5,6 +5,7 @@ import greenLine from './assets/images/green-line.svg';
 import purpleCircle from './assets/images/purple-circle.svg';
 import phoneMake from './assets/images/phonemake.png';
 import Modal from './components/Modal';
+import { signInHandler } from './utils/handlers'
 
 const App = (props) => {
   const [modalOpen, setModalOpen] = useState(false);
@@ -16,22 +17,12 @@ const App = (props) => {
     }
   }, [isSignedIn, props]);
 
-  const handleSignIn = (e) => {
-    const { target: { name, value } } = e;
-    e.preventDefault();
-    switch (name) {
-      case 'companyName':
-      setCompanyName(value);
-        break;
-      case 'signIn':
-        localStorage.setItem('companyName', companyName)
-        setIsSignedIn(true);
-        setModalOpen(false);
-        break;
-      default:
-    };
-
-  }
+  const handleSignIn = (e) => signInHandler(e, {
+    companyName,
+    setCompanyName,
+    setIsSignedIn,
+    setModalOpen,
+  })
   const handleModal = (e) => {
     const { target: { name } } = e;
     e.preventDefault();
