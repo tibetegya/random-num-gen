@@ -12,13 +12,13 @@ const Navbar = ({ isOpen, handleModal, handleOptions, showOverview, csvData }) =
       </div>
         <ul>
           <li>
-            <button name="options" onClick={handleOptions}>Options</button>
+            <button className="options" name="options" onClick={handleOptions}>Options</button>
             <div className={`dropdown ${dropClass}`}>
               <ul>
               {showOverview && (
                 <>
-                <li><button name="ascending" onClick={handleOptions}>Ascending Order</button></li>
-                <li><button name="descending" onClick={handleOptions}>Descending Order</button></li>
+                <li><button className="ascending" name="ascending" onClick={handleOptions}>Ascending Order</button></li>
+                <li><button className="descending" name="descending" onClick={handleOptions}>Descending Order</button></li>
                 <li>
                   <a
                   href={csvData}

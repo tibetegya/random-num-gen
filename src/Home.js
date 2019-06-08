@@ -5,9 +5,9 @@ import greenLine from './assets/images/green-line.svg';
 import purpleCircle from './assets/images/purple-circle.svg';
 import phoneMake from './assets/images/phonemake.png';
 import Modal from './components/Modal';
-import { signInHandler } from './utils/handlers'
+import { signInHandler, modalHandler } from './utils/handlers'
 
-const App = (props) => {
+const Home = (props) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [companyName, setCompanyName] = useState('');
   const [isSignedIn, setIsSignedIn] = useState(false);
@@ -23,22 +23,14 @@ const App = (props) => {
     setIsSignedIn,
     setModalOpen,
   })
-  const handleModal = (e) => {
-    const { target: { name } } = e;
-    e.preventDefault();
-    switch (name) {
-      case 'closeModal':
-        setModalOpen(false);
-        break;
-      case 'openModal':
-        setModalOpen(true);
-        break;
-      default:
-    };
-  };
+
+  const handleModal = (e) => modalHandler(e, {
+    setModalOpen,
+  })
+
   return (
     <React.Fragment>
-      <div className="wrapper" id="app">
+      <div className="wrapper" id="home app">
       <img src={yellowLine} alt="line" className="bg" id="yellow-ln" />
       <img src={greenLine} alt="line" className="bg" id="green-ln" />
       <img src={purpleCircle} alt="line" className="bg" id="purple-cir" />
@@ -84,4 +76,4 @@ const App = (props) => {
 };
 
 
-export default App;
+export default Home;

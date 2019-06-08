@@ -28,7 +28,6 @@ function reducer(state, action) {
           ...state,
           numbers: paginateNumbers(reversedNumbers)
         };
-    default:
   }
 }
 export default reducer;

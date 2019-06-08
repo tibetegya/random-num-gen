@@ -3,9 +3,16 @@ import {Helmet} from "react-helmet";
 import {
   BrowserRouter as Router,
   Route,
+  Switch
 } from "react-router-dom";
-import App from './App';
+import Home from './Home';
 import Dashboard from './Dashboard';
+const RoutesSwitch = () => (
+  <Switch>
+    <Route exact path="/" component={Home} />
+    <Route path="/dashboard" component={Dashboard} />
+  </Switch>
+);
 
 const Routes = () => (
     <Router>
@@ -18,8 +25,7 @@ const Routes = () => (
         <meta name="theme-color" content="#000000" />
         <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet" />
       </Helmet>
-      <Route exact path="/" component={App} />
-      <Route exact path="/dashboard" component={Dashboard} />
+      <RoutesSwitch />
     </Router>
   );
 

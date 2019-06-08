@@ -69,10 +69,10 @@ export const modalHandler = (e, {
   switch (name) {
     case 'closeModal':
       setModalOpen(false);
-      setGenAmmount(10);
+      setGenAmmount && setGenAmmount(10);
       break;
     case 'openModal':
-      setOptionsOpen(false);
+      setOptionsOpen && setOptionsOpen(false);
       setModalOpen(true);
       break;
     default:
