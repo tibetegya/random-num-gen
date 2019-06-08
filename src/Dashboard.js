@@ -10,6 +10,12 @@ import Paginator from './components/Paginator';
 import GenerateModal from './components/GenerateModal';
 import reducer from './utils/reducers';
 import { generate, getData } from './utils/helpers';
+import {
+  optionsHandler,
+  modalHandler,
+  paginateHandler,
+  generateHandler
+} from './utils/handlers'
 
 const Dashboard = (props) => {
   const [state, dispatch] = useReducer(reducer,{ data: {}, numbers: {}, csv: '' });
@@ -39,95 +45,36 @@ const Dashboard = (props) => {
     }
   }, [props, isSignedIn])
 
-  const handleOptions = (e) => {
-    const { target: { name } } = e;
-    e.preventDefault();
-    switch (name) {
-      case 'options':
-        setOptionsOpen(!optionsOpen);
-        break;
-      case 'ascending':
-        dispatch({
-          type: 'ascending_sort',
-          payload: state.data.numbers
-        })
-        setOptionsOpen(false);
-        break;
-      case 'descending':
-        dispatch({
-          type: 'descending_sort',
-          payload: state.data.numbers
-        })
-        setOptionsOpen(false);
-        break;
-      case 'download':
-        setOptionsOpen(false);
-        break;
-      case 'logout':
-        localStorage.removeItem('companyName')
-        setIsSignedIn(false);
-        break;
-      default:
-    };
+  const handleOptions = (e) => optionsHandler(e, {
+    state,
+    optionsOpen,
+    dispatch,
+    setOptionsOpen,
+    setIsSignedIn
+  })
 
-  }
+  const handleModal = (e) => modalHandler(e, {
+    setModalOpen,
+    setGenAmmount,
+    setOptionsOpen
+  })
+  const handleGenerate = (e) => generateHandler(e, {
+    setGenAmmount,
+    genAmmount,
+    setModalOpen,
+    setShowOverview,
+    setLoading,
+    generate,
+    dispatch,
+  })
 
-  const handleModal = (e) => {
-    const { target: { name } } = e;
-    e.preventDefault();
-    switch (name) {
-      case 'closeModal':
-        setModalOpen(false);
-        setGenAmmount(10);
-        break;
-      case 'openModal':
-        setOptionsOpen(false);
-        setModalOpen(true);
-        break;
-      default:
-    };
-  };
+  const handlePaginate = (e) => paginateHandler(e, {
+    numbers,
+    setPage,
+    PrevPage,
+    page
+  })
 
-  const handleGenerate = (e) => {
-    const { target: { name, value } } = e;
-
-    if(name === 'generateInput' && value !== '') {
-      setGenAmmount(parseInt(value.trim(), 10));
-    }
-    if(name === 'generateBtn') {
-      setModalOpen(false);
-      setShowOverview(true);
-      setLoading(true);
-      generate(genAmmount).then(newData => {
-        dispatch({type: 'set_data', payload: newData})
-        setLoading(false);
-      })
-    }
-  }
-  const handlePaginate = (e) => {
-    e.preventDefault();
-    const { target: { name, value } } = e;
-    switch(name) {
-      case 'paginatorInput':
-      if (value !== ''
-      && value !== '0'
-      && parseInt(value, 10) <= Object.keys(numbers).length) setPage(value);
-        break;
-      case 'previous':
-        if(page !== '1'){
-          const PrevPage = String(parseInt(page, 10) - 1)
-          setPage(PrevPage);
-        }
-        break;
-      case 'next':
-      if(page !== String(Object.keys(numbers).length)){
-        const PrevPage = String(parseInt(page, 10) + 1)
-        setPage(PrevPage);
-      }
-      break;
-      default:
-    }
-  }
   const {data, numbers, csv} = state;
   return (
     <React.Fragment>
