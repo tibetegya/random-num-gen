@@ -1,4 +1,4 @@
-import { generate } from '../../src/utils/helpers'
+import { generate } from '../../utils/helpers'
 import localforage from 'localforage'
 
 describe('helpers tests', () => {

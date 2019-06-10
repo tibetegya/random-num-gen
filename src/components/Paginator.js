@@ -14,8 +14,8 @@ const Paginator = ({ pageNumber, handlePaginate, totalPages }) => (
       Page {pageNumber} of {totalPages} pages
     </div>
     <div className="right">
-      <button name="previous" type="button" onClick={handlePaginate}>Previous</button>
-      <button name="next" type="button" onClick={handlePaginate}>Next</button>
+      <button className="prev-btn" name="previous" type="button" onClick={handlePaginate}>Previous</button>
+      <button className="next-btn" name="next" type="button" onClick={handlePaginate}>Next</button>
     </div>
   </div>
 );

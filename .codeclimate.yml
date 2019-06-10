@@ -8,7 +8,7 @@ checks:
       threshold: 4
   file-lines:
     config:
-      threshold: 250
+      threshold: 300
   method-complexity:
     config:
       threshold: 10
@@ -24,3 +24,5 @@ checks:
   return-statements:
     config:
       threshold: 4
+exclude_patterns:
+  - src/__tests__

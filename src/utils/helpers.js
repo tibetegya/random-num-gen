@@ -44,7 +44,6 @@ export function generate (maxNumbers) {
       } else {
         if(data[owner]) {
           if(data[owner].numbers.length > 0) {
-            console.log('add existing numbers to new arr');
             numberArray = [ ...data[owner].numbers ]
             newMaxNumbers += numberArray.length
           }
@@ -143,3 +142,8 @@ export const createCsv = (numbersObject) => {
   let contentType = 'data:text/csv;charset=utf-8,'
   return encodeURI(contentType+arrayString);
 }
+
+export const getName = () => {
+  return localStorage.getItem('companyName') || '';
+}
+

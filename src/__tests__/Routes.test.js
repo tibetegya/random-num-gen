@@ -3,7 +3,7 @@ import { MemoryRouter } from 'react-router-dom'
 import { shallow, mount, render } from 'enzyme';
 import localforage from 'localforage'
 
-import Routes from '../src/Routes';
+import Routes from '../Routes';
 
 describe('Routes Components', () => {
   afterEach(() => {
@@ -14,14 +14,14 @@ describe('Routes Components', () => {
     const wrapper = shallow(<MemoryRouter initialEntries={['/']}>
       <Routes />
     </MemoryRouter>)
-    expect(wrapper.html()).toContain('home')
+    expect(wrapper.html()).toContain('app')
   })
 
   it('should show redirect to Home if there is no company in storage', () => {
     const wrapper = shallow(<MemoryRouter initialEntries={['/dashboard']}>
       <Routes />
     </MemoryRouter>)
-    expect(wrapper.html()).toContain('home')
+    expect(wrapper.html()).toContain('app')
   })
 
 })

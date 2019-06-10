@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useReducer } from 'react';
+import React from 'react';
 import './assets/styles/dashboard.scss';
 import Navbar from './components/Navbar';
 import yellowLine from './assets/images/yellow-line.svg';
@@ -8,120 +8,109 @@ import EmptyState from './components/EmptyState';
 import Overview from './components/Overview';
 import Paginator from './components/Paginator';
 import GenerateModal from './components/GenerateModal';
-import reducer from './utils/reducers';
-import { generate, getData } from './utils/helpers';
+import { getData } from './utils/helpers';
 import {
-  optionsHandler,
-  modalHandler,
-  paginateHandler,
-  generateHandler
+  setData,
+  handleOptions,
+  handleModal,
+  handlePaginate,
+  handleGenerate
 } from './utils/handlers'
-
-const Dashboard = (props) => {
-  const [state, dispatch] = useReducer(reducer,{ data: {}, numbers: {}, csv: '' });
-  const [isSignedIn, setIsSignedIn] = useState(true);
-  const [showOverview, setShowOverview] = useState(false);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [optionsOpen, setOptionsOpen] = useState(false);
-  const [genAmmount, setGenAmmount] = useState(10);
-  const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState('1');
-
-  useEffect(() => {
-    setLoading(true);
-    getData().then(retrievedData => {
-      if(retrievedData){
-        dispatch({type: 'set_data', payload: retrievedData})
-        setShowOverview(true);
-        setLoading(false);
-      }
-      setLoading(false);
-    })
-  }, [])
-
-  useEffect(() => {
-    if(!localStorage.getItem('companyName')){
-      props.history.push('/');
+class Dashboard extends React.Component {
+  constructor (props) {
+    super(props);
+    this.state = {
+      warning: false,
+      loading: false,
+      showOverview: false,
+      isSignedIn: true,
+      optionsOpen:  false,
+      modalOpen: false,
+      data: {},
+      numbers: {},
+      csv: '',
+      page: '1',
+      genAmmount: 10
     }
-  }, [props, isSignedIn])
+    this.setData = setData.bind(this)
+    this.handlePaginate = handlePaginate.bind(this)
+    this.handleGenerate = handleGenerate.bind(this)
+    this.handleModal = handleModal.bind(this)
+    this.handleOptions = handleOptions.bind(this)
+  }
+  componentDidMount () {
+    if(!localStorage.getItem('companyName')){
+      this.setState({ isSignedIn: false })
+      this.props.history.push('/');
+    } else {
+      this.setState({ loading: true })
+      getData().then(retrievedData => {
+        if(retrievedData){
+        this.setData(retrievedData)
+        this.setState({ showOverview: true })
+        }
+        this.setState({ loading: false })
+      })
+    }
+  }
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.isSignedIn !== prevState.isSignedIn) {
+      this.props.history.push('/');
+    }
+  }
 
-  const handleOptions = (e) => optionsHandler(e, {
-    state,
-    optionsOpen,
-    dispatch,
-    setOptionsOpen,
-    setIsSignedIn
-  })
-
-  const handleModal = (e) => modalHandler(e, {
-    setModalOpen,
-    setGenAmmount,
-    setOptionsOpen
-  })
-  const handleGenerate = (e) => generateHandler(e, {
-    setGenAmmount,
-    genAmmount,
-    setModalOpen,
-    setShowOverview,
-    setLoading,
-    generate,
-    dispatch,
-  })
-
-  const handlePaginate = (e) => paginateHandler(e, {
-    numbers,
-    setPage,
-    PrevPage,
-    page
-  })
-
-  const {data, numbers, csv} = state;
-  return (
-    <React.Fragment>
-      <Navbar
-        isOpen={optionsOpen}
-        handleOptions={handleOptions}
-        handleModal={handleModal}
-        showOverview={showOverview}
-        csvData={csv}
-      />
-      <div className="wrapper" id="dashboard">
-        <img src={yellowLine} alt="line" className="bg" id="yellow-ln"/>
-        <img src={greenCircle} alt="line" className="bg" id="green-cir"/>
-        <div className="centered">
-        {loading ? 
-          (<Loader/>) :
-          !showOverview ? (
-          <EmptyState handleModal={handleModal}/>
-        ) : (
-          <React.Fragment>
-            <Overview
-              total={data.numbers.length}
-              min={data.max}
-              max={data.min}
-            />
-            <div className="generated">
-              <div className="title">Generated numbers</div>
-              <div className="tiles">
-                {Object.keys(numbers).length > 0 && numbers[page].map(number => (<div key={number} className="tile">{number}</div>))}
-              </div>
-            </div>
-            <Paginator
-              pageNumber={page}
-              totalPages={Object.keys(numbers).length}
-              handlePaginate={handlePaginate}
-            />
-          </React.Fragment>
-        )}
+  render () {
+    const { optionsOpen, showOverview, csv, loading, data, numbers, page, modalOpen, warning } = this.state
+    const totalNumbers = data.numbers ? data.numbers.length : 0
+    return (
+      <React.Fragment>
+        <Navbar
+          isOpen={optionsOpen}
+          handleOptions={this.handleOptions}
+          handleModal={this.handleModal}
+          showOverview={showOverview}
+          csvData={csv}
+        />
+        <div className="wrapper" id="dashboard">
+          <img src={yellowLine} alt="line" className="bg" id="yellow-ln"/>
+          <img src={greenCircle} alt="line" className="bg" id="green-cir"/>
+          <div className="centered">
+          {loading ?
+            <Loader/> :
+              !showOverview ?
+                <EmptyState handleModal={this.handleModal}/>
+                :
+              <React.Fragment>
+                <Overview
+                  total={totalNumbers}
+                  min={data.min}
+                  max={data.max}
+                />
+                <div className="generated">
+                  <div className="title">Generated numbers</div>
+                  <div className="tiles">
+                    {Object.keys(numbers).length > 0 && numbers[page].map(number => (<div key={number} className="tile">{number}</div>))}
+                  </div>
+                </div>
+                <Paginator
+                  pageNumber={page}
+                  totalPages={Object.keys(numbers).length}
+                  handlePaginate={this.handlePaginate}
+                />
+              </React.Fragment>
+          }
+          </div>
         </div>
-      </div>
-      <GenerateModal
-        handleAction={handleGenerate}
-        handleModal={handleModal}
-        isOpen={modalOpen}
-      />
+        <GenerateModal
+          showWarning={warning}
+          total={totalNumbers}
+          handleAction={this.handleGenerate}
+          handleModal={this.handleModal}
+          isOpen={modalOpen}
+        />
     </React.Fragment>
-  )
+    )
+  }
 }
 
 export default Dashboard;

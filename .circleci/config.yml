@@ -4,7 +4,7 @@ jobs:
     environment:
       CC_TEST_REPORTER_ID: $RNG_CC_TEST_REPORTER_ID
     docker:
-      - image: circleci/node:8.9.4
+      - image: circleci/node:lts
     steps:
       - checkout 
       - run:

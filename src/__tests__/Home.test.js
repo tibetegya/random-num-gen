@@ -1,7 +1,7 @@
 import React from 'react';
 import { shallow, mount, render } from 'enzyme';
 
-import Home from '../src/Home';
+import Home from '../Home';
 
 describe('Home component test', () => {
   const mockFn = jest.fn();

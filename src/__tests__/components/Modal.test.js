@@ -2,7 +2,7 @@ import React from 'react';
 import { MemoryRouter } from 'react-router-dom'
 import { shallow, mount, render } from 'enzyme';
 
-import Modal from '../../src/components/Modal';
+import Modal from '../../components/Modal';
 
 describe('Modal Components', () => {
   it('should match snapshot', () => {
