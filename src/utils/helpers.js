@@ -143,3 +143,8 @@ export const createCsv = (numbersObject) => {
   let contentType = 'data:text/csv;charset=utf-8,'
   return encodeURI(contentType+arrayString);
 }
+
+export const getName = () => {
+  return localStorage.getItem('companyName') || '';
+}
+

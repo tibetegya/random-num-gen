@@ -23,7 +23,23 @@
       list-style: none;
     }
   }
-
+  .right{
+    display: flex;
+    align-items: center;
+    .profile-letter{
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      text-transform: uppercase;
+      background-color: #cd4e7a;
+      border-radius: 50%;
+      color: white;
+      margin: 0px 10px;
+      width: 30px;
+      height: 30px;
+    }
+  }
   button{
     border-radius: 4px;
     border: none;
@@ -39,13 +55,14 @@
       background-color: rgb(235, 235, 235);
       color: black;
     }
-    &.generate{
-      // width: 14rem
+  }
+  #generate-btn-nav{
+    color: white;
+    background-color: #6C46DE;
+    &:hover{
+      opacity: .9;
       color: white;
       background-color: #6C46DE;
-      &:hover{
-        opacity: .9;
-      }
     }
   }
   .dropdown{

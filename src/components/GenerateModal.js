@@ -13,6 +13,7 @@ const GenerateModal = ({ handleAction, handleModal, isOpen }) => (
       <span>You must enter number of phone numbers to generate</span>
       <input
         type="number"
+        className="generate-input"
         name="generateInput"
         id="generateInput"
         onChange={handleAction}
