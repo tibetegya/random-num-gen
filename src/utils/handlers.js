@@ -1,135 +1,124 @@
-export const signInHandler = (e, {
-  companyName,
-  setCompanyName,
-  setIsSignedIn,
-  setModalOpen
-}) => {
+import { generate, getData, paginateNumbers, randomSort, createCsv } from './helpers';
+
+export const handleSignIn = function (e) {
   const { target: { name, value } } = e;
   e.preventDefault();
   switch (name) {
     case 'companyName':
-    setCompanyName(value);
+    this.setState({ companyName: value })
       break;
     case 'signIn':
-      localStorage.setItem('companyName', companyName)
-      setIsSignedIn(true);
-      setModalOpen(false);
+      localStorage.setItem('companyName', this.state.companyName)
+      this.setState({ isSignedIn: true, modalOpen: false })
       break;
-    default:
   };
 
 }
 
-export const optionsHandler = (e, {
-  optionsOpen,
-  dispatch,
-  setOptionsOpen,
-  setIsSignedIn
-}) => {
+export const handleOptions = function (e) {
   const { target: { name } } = e;
   e.preventDefault();
   switch (name) {
     case 'options':
-      setOptionsOpen(!optionsOpen);
+      this.setState(state => ({
+        optionsOpen: !state.optionsOpen
+      }))
       break;
     case 'ascending':
-      dispatch({
-        type: 'ascending_sort',
-        payload: state.data.numbers
+      const derivedNumbers = paginateNumbers(randomSort(this.state.data.numbers))
+      this.setState({
+        numbers: derivedNumbers,
+        optionsOpen: false
       })
-      setOptionsOpen(false);
       break;
     case 'descending':
-      dispatch({
-        type: 'descending_sort',
-        payload: state.data.numbers
+      const reversedNumbers = paginateNumbers(randomSort(this.state.data.numbers).reverse())
+      this.setState({
+        numbers: reversedNumbers,
+        optionsOpen: false
       })
-      setOptionsOpen(false);
       break;
     case 'download':
-      setOptionsOpen(false);
+        this.setState({ optionsOpen: false })
       break;
     case 'logout':
       localStorage.removeItem('companyName')
-      setIsSignedIn(false);
+      this.setState({ isSignedIn: false, optionsOpen: false })
       break;
-    default:
   };
 
 }
 
 
-export const modalHandler = (e, {
-  setModalOpen,
-  setGenAmmount,
-  setOptionsOpen
-}) => {
+export const handleModal = function (e) {
   const { target: { name } } = e;
   e.preventDefault();
   switch (name) {
     case 'closeModal':
-      setModalOpen(false);
-      setGenAmmount && setGenAmmount(10);
+      this.setState({ modalOpen: false, genAmmount: 10 });
       break;
     case 'openModal':
-      setOptionsOpen && setOptionsOpen(false);
-      setModalOpen(true);
+      this.setState({ modalOpen: true, optionsOpen: false });
       break;
-    default:
   };
 };
 
-export const paginateHandler = (e, {
-  numbers,
-  setPage,
-  PrevPage,
-  page
-}) => {
+export const handlePaginate = function (e) {
+  const { numbers, page } = this.state
   e.preventDefault();
   const { target: { name, value } } = e;
   switch(name) {
     case 'paginatorInput':
     if (value !== ''
     && value !== '0'
-    && parseInt(value, 10) <= Object.keys(numbers).length) setPage(value);
+    && parseInt(value, 10) <= Object.keys(numbers).length) this.setState({ page: value });
       break;
     case 'previous':
       if(page !== '1'){
         const PrevPage = String(parseInt(page, 10) - 1)
-        setPage(PrevPage);
+        this.setState({ page: PrevPage})
       }
       break;
     case 'next':
     if(page !== String(Object.keys(numbers).length)){
-      const PrevPage = String(parseInt(page, 10) + 1)
-      setPage(PrevPage);
+      const nextPage = String(parseInt(page, 10) + 1)
+      this.setState({ page: nextPage})
     }
     break;
-    default:
   }
 }
 
-export const generateHandler = (e, {
-  setGenAmmount,
-  genAmmount,
-  setModalOpen,
-  setShowOverview,
-  setLoading,
-  generate,
-  dispatch,
-}) => {
+export const handleGenerate = function (e) {
   const { target: { name, value } } = e;
+  const { genAmmount } = this.state
 
   if(name === 'generateInput' && value !== '') {
-    setGenAmmount(parseInt(value.trim(), 10));
+    this.setState({ genAmmount: parseInt(value.trim(), 10) });
   }
   if(name === 'generateBtn') {
-    setModalOpen(false);
-    setShowOverview(true);
-    setLoading(true);
+    this.setState({
+      modalOpen: false,
+      showOverview: true,
+      loading: true
+    })
     generate(genAmmount).then(newData => {
-      dispatch({type: 'set_data', payload: newData})
-      setLoading(false);
+      this.setState({
+        modalOpen: false,
+        showOverview: true,
+        loading: true
+      })
+      this.setData(newData)
+      this.setState({ loading: false })
     })
   }
+}
+
+export const setData = function (data) {
+  const numberPages = paginateNumbers(data.numbers);
+    const csv = createCsv(numberPages)
+    this.setState({
+      data,
+      numbers: numberPages,
+      csv
+    })
 }

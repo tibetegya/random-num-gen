@@ -2,17 +2,10 @@ import React from 'react';
 import {Helmet} from "react-helmet";
 import {
   BrowserRouter as Router,
-  Route,
-  Switch
+  Route
 } from "react-router-dom";
 import Home from './Home';
 import Dashboard from './Dashboard';
-const RoutesSwitch = () => (
-  <Switch>
-    <Route exact path="/" component={Home} />
-    <Route path="/dashboard" component={Dashboard} />
-  </Switch>
-);
 
 const Routes = () => (
     <Router>
@@ -25,7 +18,8 @@ const Routes = () => (
         <meta name="theme-color" content="#000000" />
         <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet" />
       </Helmet>
-      <RoutesSwitch />
+      <Route exact path="/" component={Home} />
+      <Route path="/dashboard" component={Dashboard} />
     </Router>
   );
 
